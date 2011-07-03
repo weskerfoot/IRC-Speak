@@ -36,6 +36,8 @@ aliases = {"rate" : 1,
 options = {"nick-here" : {"args": {"pitch" : 200}, "language" : "english"},"nick2-here" :  {"args": {"pitch" : 40}, "language" : "english"}}
 
 def edit_users(*args, **new_options):
+    """Edits the options dictionary to add/update a user's settings"""
+    
     nick = new_options['name'][0]
     if not options.has_key(nick):
         options[nick] = {"args": {}}
@@ -51,6 +53,8 @@ def edit_users(*args, **new_options):
     return options    
 
 def irc_speak(word, word_eol, users):
+    """Checks to see if a user is set to be voiced, and if so synthesizes their text"""
+    
     if options.has_key(word[0]): # check to see if the user is in the options dictionary (word[0] == their nick)
         [espeak.set_parameter(aliases[arg], options[word[0]]["args"][arg]) for arg in options[word[0]]["args"]]
         # options[word[0]]["args"][arg] is the same as options[nickname]["args"][arg] (where arg is some one of the names in aliases
@@ -60,6 +64,8 @@ def irc_speak(word, word_eol, users):
     return # return nothing because they weren't in the options dictionary
 
 def commands(word, word_eol, users):
+    """Function for doing different commands with XChat"""
+    
     arguments = word[1:]
     if arguments[0] == "set":
         try:
