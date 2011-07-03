@@ -4,4 +4,12 @@ Note: this plugin requires my fork of python-espeak to properly display the list
 Don't be surprised if you get an exception when you try to do "/ircspeak langlist"
 
 /help ircspeak
+
+Setting a new user:
 /ircspeak set --help
+
+Saving your options:
+/ircspeak save
+
+Get a list of all available languages:
+/ircspeak langlist
