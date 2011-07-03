@@ -63,7 +63,8 @@ def commands(word, word_eol, users):
     arguments = word[1:]
     if arguments[0] == "set":
         try:
-            print edit_users(**vars(editor.parse_args(arguments[1:]))) #argparse raises a SystemExit error if you use --help or -h, or have the wrong arguments
+            print edit_users(**vars(editor.parse_args(arguments[1:])))
+            # argparse raises a SystemExit error if you use --help or -h, or have the wrong arguments
         except SystemExit:
             pass
     elif arguments[0] == "langlist":
