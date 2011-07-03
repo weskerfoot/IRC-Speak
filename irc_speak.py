@@ -14,7 +14,7 @@ from espeak import espeak
 options_path = os.path.expanduser("~/.xchat2/options.json")
 
 __module_name__ = "IRC Speak" 
-__module_version__ = "1.1" 
+__module_version__ = "1.2" 
 __module_description__ = "Allows you to make certain users' text run through a voice synthesizer"
 
 editor = argparse.ArgumentParser(description="""
