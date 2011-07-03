@@ -1,4 +1,7 @@
-TODO: add support for deleting users, and for storing it in a json file
+TODO: add support for deleting users
 
 Note: this plugin requires my fork of python-espeak to properly display the list of available languages
 Don't be surprised if you get an exception when you try to do "/ircspeak langlist"
+
+/help ircspeak
+/ircspeak set --help
