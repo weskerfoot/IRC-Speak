@@ -3,6 +3,14 @@ TODO: add support for deleting users
 Note: this plugin requires my fork of python-espeak to properly display the list of available languages
 Don't be surprised if you get an exception when you try to do "/ircspeak langlist"
 
+Put irc_speak.py in your .xchat2 directory (usually ~/.xchat2)
+Install either python-synth (https://github.com/nisstyre56/python-synth) or python-espeak (https://launchpad.net/python-espeak)
+In both cases it should be as simple as "python setup.py"
+
+If you're using python-synth:
+
+"git clone http://github.com/nisstyre56/python-synth.git" to get a copy of the source
+
 /help ircspeak
 
 Setting a new user:
