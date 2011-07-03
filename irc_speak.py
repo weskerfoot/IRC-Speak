@@ -67,7 +67,10 @@ def commands(word, word_eol, users):
     """Function for doing different commands with XChat"""
     
     arguments = word[1:]
-    if arguments[0] == "set":
+    if not arguments:
+        return xchat.EAT_XCHAT
+    
+    elif arguments[0] == "set":
         try:
             print edit_users(**vars(editor.parse_args(arguments[1:])))
             # argparse raises a SystemExit error if you use --help or -h, or have the wrong arguments
@@ -75,7 +78,8 @@ def commands(word, word_eol, users):
             pass
     elif arguments[0] == "langlist":
         for item in espeak.list_voices():
-            print item["name"] 
+            print item["name"]
+    return xchat.EAT_XCHAT
 
 xchat.hook_print("Channel Message", irc_speak)
-xchat.hook_command("ircspeak",commands)  
+xchat.hook_command("ircspeak",commands, userdata=None, help="/ircspeak set --help")  
