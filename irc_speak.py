@@ -8,7 +8,10 @@ except ImportError as exception:
 
 import xchat
 import argparse
+import os
 from espeak import espeak
+
+options_path = os.path.expanduser("~/.xchat2/options.json")
 
 __module_name__ = "IRC Speak" 
 __module_version__ = "1.1" 
@@ -26,7 +29,7 @@ editor.add_argument("-rate", nargs=1, type=int, default=[175], help="default=175
 editor.add_argument("-vrange", nargs=1, type=int, default=[50], help="default=50")
 editor.add_argument("-language", nargs=1, type=str, help="type \"/ircspeak langlist\" to get a list of languages", default=["english"])
 
-options = json.load(open("/home/wes/.xchat2/options.json", "rw"))
+options = json.load(open(options_path, "rw"))
 
 aliases = {"rate" : 1,
             "volume" : 2,
@@ -69,7 +72,7 @@ def set_user(arguments):
         return "Exited with status %s" % (exception)
               
 def save(arguments):
-    with open('/home/wes/.xchat2/options.json', mode='w') as jsonfile:
+    with open(options_path, mode='w') as jsonfile:
         json.dump(options, jsonfile)
     return "Saved!"
 
