@@ -100,15 +100,22 @@ def save():
         json.dump(options, jsonfile)
     return "Saved!"
 
+def deluser(user):
+    del options[user[0]]
+    return "Deleted!"
+
 def commands(word, word_eol, users):
     """Function for doing different commands with XChat"""
     arguments = word[1:]
     commands = {"set" : set_user,
-            "langlist" : (lambda: ", ".join([item["name"] for item in espeak.list_voices()])),
-                # lambda is there because each value must be a callable
-            "save" : save}
+                "langlist" : (lambda: ", ".join([item["name"] for item in espeak.list_voices()])),
+                "save" : save,
+                "rm" : deluser,
+                "list" : (lambda: "\n".join(["%s: %s" % (key, options[key]['args']) for key in options]))}
     try:
-        if "set" in arguments:
+        if "set" == arguments[0]:
+            print commands[arguments[0]](arguments[1:])
+        elif "rm" == arguments[0]:
             print commands[arguments[0]](arguments[1:])
         else:
             print commands[arguments[0]]()
