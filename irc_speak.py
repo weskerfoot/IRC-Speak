@@ -73,48 +73,48 @@ def edit_users(*args, **new_options):
     
     if new_options["language"]:
         options[nick]["language"] = new_options["language"][0]
-    return options    
+    return new_options
 
 def irc_speak(word, word_eol, users):
     """Checks to see if a user is set to be voiced, and if so synthesizes their text"""
-    
     if options.has_key(word[0]): # check to see if the user is in the options dictionary (word[0] == their nick)
         [espeak.set_parameter(aliases[arg], options[word[0]]["args"][arg]) for arg in options[word[0]]["args"]]
         # options[word[0]]["args"][arg] is the same as options[nickname]["args"][arg] (where arg is some one of the names in aliases
         # which corresponds to some integer value in options[nick][args])
         espeak.set_voice(name=options[word[0]]["language"])
-        return espeak.synth(word[1])
-    return # return nothing because they weren't in the options dictionary
+        espeak.synth(word[1])
+        xchat.emit_print("Channel",word[0],word[1])
+        return xchat.EAT_NONE
+    return xchat.EAT_NONE # return nothing because they weren't in the options dictionary
 
 def set_user(arguments):
     try:
-        return edit_users(**vars(editor.parse_args(arguments[1:])))
+        arguments = editor.parse_args(arguments)
+        return edit_users(**vars(arguments))
         # argparse raises a SystemExit error if you use --help or -h, or have the wrong arguments
     except SystemExit as exception:
         return "Exited with status %s" % (exception)
               
-def save(arguments):
+def save():
     with open(options_path, mode='w') as jsonfile:
         json.dump(options, jsonfile)
     return "Saved!"
 
 def commands(word, word_eol, users):
     """Function for doing different commands with XChat"""
-    
     arguments = word[1:]
-
-    if not arguments:
-        return xchat.EAT_XCHAT
-            
     commands = {"set" : set_user,
-            "langlist" : (lambda x:", ".join([item["name"] for item in espeak.list_voices()])),
+            "langlist" : (lambda: ", ".join([item["name"] for item in espeak.list_voices()])),
+                # lambda is there because each value must be a callable
             "save" : save}
     try:
-        print commands[arguments[0]](arguments)
+        if "set" in arguments:
+            print commands[arguments[0]](arguments[1:])
+        else:
+            print commands[arguments[0]]()
     except KeyError as exception:
-        print "No such option", exception
+        return xchat.EAT_XCHAT
             
-    return xchat.EAT_XCHAT
 
+xchat.hook_command("ircspeak",commands, help="/ircspeak set --help")
 xchat.hook_print("Channel Message", irc_speak)
-xchat.hook_command("ircspeak",commands, userdata=None, help="/ircspeak set --help")  
