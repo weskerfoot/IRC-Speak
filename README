@@ -1,5 +1,3 @@
-TODO: add support for deleting users
-
 Note: this plugin requires my fork of python-espeak to properly display the list of available languages
 Don't be surprised if you get an exception when you try to do "/ircspeak langlist"
 
@@ -15,6 +13,13 @@ If you're using python-synth:
 
 Setting a new user:
 /ircspeak set --help
+
+Deleting a user:
+/ircspeak del <user>
+
+Listing users:
+
+/ircspeak list
 
 Saving your options:
 /ircspeak save
