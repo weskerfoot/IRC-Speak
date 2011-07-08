@@ -58,7 +58,7 @@ aliases = {"rate" : 1,
             "pitch" : 3,
             "vrange" : 4}
 
-def edit_users(*args, **new_options):
+def edit_users(**new_options):
     """Edits the options dictionary to add/update a user's settings"""
     nick = new_options['name'][0]
     if not nick in options:
@@ -78,11 +78,12 @@ def irc_speak(word, word_eol, users):
         # which corresponds to some integer value in options[nick][args])
         espeak.set_voice(name=options[word[0]]["language"])
         espeak.synth(word[1])
-        xchat.emit_print("Channel",word[0],word[1])
+        xchat.emit_print("Channel", word[0], word[1])
         return xchat.EAT_NONE
     return xchat.EAT_NONE # return nothing because they weren't in the options dictionary
 
 def set_user(arguments):
+    """Parses arguments and calls the edit_users function"""
     try:
         arguments = editor.parse_args(arguments)
         return edit_users(**vars(arguments))
@@ -91,11 +92,13 @@ def set_user(arguments):
         return "Exited with status %s" % (exception)
               
 def save():
+    """Saves a user in the json file"""
     with open(options_path, mode='w') as jsonfile:
         json.dump(options, jsonfile)
     return "Saved!"
 
 def deluser(user):
+    """Deletes a user from the global dictionary"""
     if user[0] in options:
         del options[user[0]]
         return "Deleted!"
@@ -112,8 +115,8 @@ def commands(word, word_eol, users):
     arguments = word[1:]
     try:
         print commands[arguments[0]](arguments[1:])
-    except KeyError as exception:
+    except KeyError:
         return xchat.EAT_XCHAT
 
-xchat.hook_command("ircspeak",commands, help="/ircspeak set --help")
+xchat.hook_command("ircspeak", commands, help="/ircspeak set --help")
 xchat.hook_print("Channel Message", irc_speak)
