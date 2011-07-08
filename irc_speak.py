@@ -60,24 +60,19 @@ aliases = {"rate" : 1,
 
 def edit_users(*args, **new_options):
     """Edits the options dictionary to add/update a user's settings"""
-    
     nick = new_options['name'][0]
-    if not options.has_key(nick):
+    if not nick in options:
         options[nick] = {"args": {}}
-        
-    for item in new_options:
-        if (new_options[item] and (item!="name") and (item!="language")):
-        # don't want to use name or language, because language needs to get set separately
-        # and name is only used to create the main dictionary for their options
-            options[nick]["args"][item] = new_options[item][0]
-    
+    options[nick]["args"] = {key : value[0] for key,value in new_options.iteritems() if (key and (key!="name") and (key!="language"))}
+    # don't want to use name or language, because language needs to get set separately
+    # and name is only used to create the main dictionary for their options
     if new_options["language"]:
         options[nick]["language"] = new_options["language"][0]
-    return new_options
+    return options[nick]
 
 def irc_speak(word, word_eol, users):
     """Checks to see if a user is set to be voiced, and if so synthesizes their text"""
-    if options.has_key(word[0]): # check to see if the user is in the options dictionary (word[0] == their nick)
+    if word[0] in options: # check to see if the user is in the options dictionary (word[0] == their nick)
         [espeak.set_parameter(aliases[arg], options[word[0]]["args"][arg]) for arg in options[word[0]]["args"]]
         # options[word[0]]["args"][arg] is the same as options[nickname]["args"][arg] (where arg is some one of the names in aliases
         # which corresponds to some integer value in options[nick][args])
@@ -101,27 +96,24 @@ def save():
     return "Saved!"
 
 def deluser(user):
-    del options[user[0]]
-    return "Deleted!"
-
+    if user[0] in options:
+        del options[user[0]]
+        return "Deleted!"
+    return "No such user"
+    
 def commands(word, word_eol, users):
     """Function for doing different commands with XChat"""
+    commands = {"set" : (lambda x: set_user(x)),
+                "langlist" : (lambda x: ", ".join([item["name"] for item in espeak.list_voices()])),
+                "save" : (lambda x: save()),
+                "rm" : (lambda x: deluser(x)),
+                "list" : (lambda x: "\n".join(["%s : %s" % (key, value["args"]) for key, value in options.iteritems()]))}
+
     arguments = word[1:]
-    commands = {"set" : set_user,
-                "langlist" : (lambda: ", ".join([item["name"] for item in espeak.list_voices()])),
-                "save" : save,
-                "rm" : deluser,
-                "list" : (lambda: "\n".join(["%s: %s" % (key, options[key]['args']) for key in options]))}
     try:
-        if "set" == arguments[0]:
-            print commands[arguments[0]](arguments[1:])
-        elif "rm" == arguments[0]:
-            print commands[arguments[0]](arguments[1:])
-        else:
-            print commands[arguments[0]]()
+        print commands[arguments[0]](arguments[1:])
     except KeyError as exception:
         return xchat.EAT_XCHAT
-            
 
 xchat.hook_command("ircspeak",commands, help="/ircspeak set --help")
 xchat.hook_print("Channel Message", irc_speak)
