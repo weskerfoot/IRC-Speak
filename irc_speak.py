@@ -106,10 +106,10 @@ def deluser(user):
     
 def commands(word, word_eol, users):
     """Function for doing different commands with XChat"""
-    commands = {"set" : (lambda x: set_user(x)),
+    commands = {"set" : set_user,
+                "rm" : deluser,
                 "langlist" : (lambda x: ", ".join([item["name"] for item in espeak.list_voices()])),
                 "save" : (lambda x: save()),
-                "rm" : (lambda x: deluser(x)),
                 "list" : (lambda x: "\n".join(["%s : %s" % (key, value["args"]) for key, value in options.iteritems()]))}
 
     arguments = word[1:]
